@@ -1,12 +1,15 @@
 import pandas as pd
 
-df = pd.read_csv("../Dataset/train.csv")
+file_path = "../Dataset/test.csv"
+df = pd.read_csv(file_path)
 
-df["GroupID"] = df["PassengerId"].astype(str).str.split("_").str[0]
-df["IndividualID"] = df["PassengerId"].astype(str).str.split("_").str[1].astype(int)
+df[['Group', 'GroupMember']] = df['PassengerId'].str.split('_', expand=True)
+df['GroupMember'] = df['GroupMember'].astype(int)
 
-df["Deck"] = df["Cabin"].astype(str).str.split("/").str[0]
-df["CabinNum"] = df["Cabin"].astype(str).str.split("/").str[1]
-df["Side"] = df["Cabin"].astype(str).str.split("/").str[2]
+df[['Deck', 'CabinNum', 'Side']] = df['Cabin'].str.split('/', expand=True)
 
-df.to_csv("../Dataset/preprocessed_passenger_cabin.csv", index=False)
+df['CabinNum'] = pd.to_numeric(df['CabinNum'], errors='coerce')
+
+df.to_csv("../Dataset/test_splitted.csv", index=False)
+
+print(df.head())
